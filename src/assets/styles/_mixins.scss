@@ -1,0 +1,36 @@
+@mixin tablet {
+  @media (min-width: $tablet) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: $desktop) {
+    @content;
+  }
+}
+
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin button-base {
+  padding: $spacing-sm;
+  border: none;
+  border-radius: $border-radius;
+  font-size: $font-size-base;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+@mixin primary-button {
+  @include button-base;
+  background-color: $primary-color;
+  color: $background-color;
+
+  &:hover {
+    background-color: $primary-hover-color;
+  }
+}
