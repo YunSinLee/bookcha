@@ -10,8 +10,7 @@ lerna-debug.log*
 # Dependency directories
 node_modules
 .pnpm-store/
-
-# Build output
+.DS_Store
 dist
 dist-ssr
 coverage
@@ -21,6 +20,8 @@ coverage
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
+/cypress/videos/
+/cypress/screenshots/
 .idea
 *.suo
 *.ntvs*
@@ -53,3 +54,4 @@ Thumbs.db
 # Cache
 .cache/
 .temp/ 
+*.tsbuildinfo
