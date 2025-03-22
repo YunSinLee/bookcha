@@ -1,19 +1,3 @@
-<script setup lang="ts">
-import { useRouter } from "vue-router";
-import { useBookStore } from "@/stores/book";
-
-const router = useRouter();
-const bookStore = useBookStore();
-
-const goToAddBook = () => {
-  router.push("/books/new");
-};
-
-const getRatingStars = (rating: number) => {
-  return "★".repeat(rating) + "☆".repeat(5 - rating);
-};
-</script>
-
 <template>
   <div class="book-list">
     <div class="book-list__header">
@@ -40,27 +24,61 @@ const getRatingStars = (rating: number) => {
         :key="book.id"
         class="book-list__item"
       >
-        <div class="book-list__item-header">
-          <h2 class="book-list__item-title">{{ book.title }}</h2>
-          <span class="book-form__item-rating">{{
-            getRatingStars(book.rating)
-          }}</span>
+        <img
+          class="book-list__item-cover"
+          src="../assets/default-bookcover.jpg"
+          :alt="book.title"
+        />
+        <div class="book-list__item-content">
+          <div class="book-list__item-header">
+            <h2 class="book-list__item-title">{{ book.title }}</h2>
+            <button
+              class="book-list__item-edit"
+              @click="router.push(`/books/${book.id}/edit`)"
+            >
+              수정하기
+            </button>
+          </div>
+          <p class="book-list__item-author">by {{ book.author }}</p>
+          <div class="book-list__item-rating">
+            <span class="rating-stars">{{ getRatingStars(book.rating) }}</span>
+          </div>
+          <p class="book-list__item-summary">"{{ book.summary }}"</p>
+          <p class="book-list__item-note" v-if="book.note">
+            {{ book.note }}
+          </p>
         </div>
-        <p class="book-list__item-author">{{ book.author }}</p>
-        <p class="book-list__item-summary">{{ book.summary }}</p>
-        <p v-if="book.note" class="book-list__item-note">
-          {{ book.note }}
-        </p>
-        <button
-          class="book-list__item-edit"
-          @click="router.push(`/books/${book.id}/edit`)"
-        >
-          수정하기
-        </button>
       </li>
     </ul>
   </div>
 </template>
+
+<script setup lang="ts">
+import { useRouter } from "vue-router";
+import { useBookStore } from "@/stores/book";
+
+const router = useRouter();
+const bookStore = useBookStore();
+
+const goToAddBook = () => {
+  router.push("/books/new");
+};
+
+const getRatingStars = (rating: number) => {
+  return "★".repeat(rating) + "☆".repeat(5 - rating);
+};
+
+const formatNote = (note: string) => {
+  const maxLength = 200;
+  let formattedNote = note.replace(/\n/g, "<br>");
+
+  if (formattedNote.length > maxLength) {
+    formattedNote = formattedNote.substring(0, maxLength) + "...";
+  }
+
+  return formattedNote;
+};
+</script>
 
 <style lang="scss" scoped>
 .book-list {
@@ -103,7 +121,7 @@ const getRatingStars = (rating: number) => {
   &__items {
     list-style: none;
     display: grid;
-    gap: $spacing-md;
+    gap: $spacing-xl;
     grid-template-columns: 1fr;
 
     @include tablet {
@@ -116,10 +134,33 @@ const getRatingStars = (rating: number) => {
   }
 
   &__item {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
     padding: $spacing-md;
     border-radius: $border-radius;
     background-color: $background-color;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: $shadow-sm;
+
+    &-cover {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+      border-radius: $border-radius-sm;
+    }
+
+    @include mobile {
+      flex-direction: row;
+
+      &-cover {
+        width: 120px;
+        height: 160px;
+      }
+    }
+
+    &-content {
+      flex: 1;
+    }
 
     &-header {
       display: flex;
@@ -129,36 +170,52 @@ const getRatingStars = (rating: number) => {
     }
 
     &-title {
-      font-size: $font-size-lg;
-      margin-right: $spacing-sm;
-    }
-
-    &-rating {
-      color: #ffd700;
-      white-space: nowrap;
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: $spacing-xs;
     }
 
     &-author {
       color: $text-light-color;
-      font-size: $font-size-sm;
+      font-size: $font-size-md;
       margin-bottom: $spacing-sm;
+    }
+
+    &-rating {
+      margin-bottom: $spacing-sm;
+
+      .rating-stars {
+        color: #ffd700;
+        font-size: $font-size-lg;
+      }
     }
 
     &-summary {
-      margin-bottom: $spacing-sm;
+      font-style: italic;
+      color: $text-color;
+      margin-bottom: $spacing-md;
+      line-height: 1.5;
     }
 
     &-note {
-      font-style: italic;
       color: $text-light-color;
-      margin-bottom: $spacing-sm;
+      font-size: $font-size-sm;
+      line-height: 1.5;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      white-space: normal;
     }
 
     &-edit {
       @include button-base;
       background-color: transparent;
       color: $primary-color;
-      padding: $spacing-xs;
+      padding: $spacing-xs $spacing-sm;
+      border: 1px solid $primary-color;
+      border-radius: $border-radius-sm;
+      white-space: nowrap;
 
       &:hover {
         background-color: rgba($primary-color, 0.1);
