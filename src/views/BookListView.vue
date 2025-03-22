@@ -23,6 +23,7 @@
         v-for="book in bookStore.books"
         :key="book.id"
         class="book-list__item"
+        @click="goToBookDetail(book.id)"
       >
         <img
           class="book-list__item-cover"
@@ -34,7 +35,7 @@
             <h2 class="book-list__item-title">{{ book.title }}</h2>
             <button
               class="book-list__item-edit"
-              @click="router.push(`/books/${book.id}/edit`)"
+              @click.stop="router.push(`/books/${book.id}/edit`)"
             >
               수정하기
             </button>
@@ -62,6 +63,10 @@ const bookStore = useBookStore();
 
 const goToAddBook = () => {
   router.push("/books/new");
+};
+
+const goToBookDetail = (id: number) => {
+  router.push(`/books/${id}`);
 };
 
 const getRatingStars = (rating: number) => {
@@ -141,6 +146,13 @@ const formatNote = (note: string) => {
     border-radius: $border-radius;
     background-color: $background-color;
     box-shadow: $shadow-sm;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
 
     &-cover {
       width: 100%;
